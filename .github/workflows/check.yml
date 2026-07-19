@@ -1,0 +1,21 @@
+name: Check the page before it can go live
+
+# Runs on every pull request into main, and on anything pushed to draft.
+# Porkbun publishes main, so this is the gate: a change that fails here
+# cannot be merged, and therefore cannot reach arkhimedes.ai.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [draft]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check the page
+        run: node .github/check.mjs
