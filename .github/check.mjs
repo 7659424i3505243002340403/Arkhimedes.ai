@@ -69,11 +69,21 @@ check('font is embedded', () => {
   return 'Geist embedded';
 });
 
-// Anything in the shipped file is public. Working notes belong in the build
-// scripts, which stay on our machine.
-check('no comments in the shipped page', () => {
-  const found = html.match(/<!--[\s\S]{0,80}?-->/g);
-  if (found) throw new Error(`${found.length} comment(s) would be public, starting with: ${found[0].slice(0, 60)}`);
+// Anything in the shipped file is public: view-source shows the lot. Working
+// notes belong in the build scripts, which stay on our machine.
+//
+// This check used to look only for HTML comments, and with a length limit, so
+// it passed a page carrying four stylesheet comments full of working notes,
+// which then went live. Both syntaxes, no length limit.
+check('no HTML comments', () => {
+  const found = html.match(/<!--[\s\S]*?-->/g);
+  if (found) throw new Error(`${found.length} HTML comment(s) would be public, starting with: ${found[0].slice(0, 70)}`);
+  return 'none';
+});
+
+check('no stylesheet comments', () => {
+  const found = html.match(/\/\*[\s\S]*?\*\//g);
+  if (found) throw new Error(`${found.length} stylesheet comment(s) would be public, starting with: ${found[0].slice(0, 70)}`);
   return 'none';
 });
 
