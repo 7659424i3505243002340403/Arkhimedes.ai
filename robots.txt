@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /confirmed.html
 
 Sitemap: https://arkhimedes.ai/sitemap.xml
