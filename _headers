@@ -5,15 +5,14 @@
 # are called response headers. Each one below switches off a way a site can be
 # attacked. Nothing here changes how the page looks.
 #
-# WHERE THIS FILE IS READ. Every modern static host reads a file named _headers
-# at the top of the site and sends what it says: Cloudflare Pages, Netlify and
-# the rest all use this exact format. Porkbun, which serves arkhimedes.ai today,
-# does not read it, and that is proved rather than assumed by
-# scripts/ask-the-live-site-for-the-six.mjs, which fetches the real address and
-# prints what actually arrived. The two that a browser will obey when they come
-# from inside the page itself are ALSO written into index.html as meta tags, so
-# they work today. The file is here so that the day the site moves to a host
-# that reads it, all six arrive with no further work.
+# This file is public, because it sits at the top of the site. Nothing in it is
+# a secret: it is the same policy the page itself carries, written in the format
+# every modern static host reads.
+#
+# Two of the six also work when they come from inside the page, and both are in
+# index.html, so they work today whatever the host does. The other four are only
+# obeyed as real headers from the server. Which of the six actually reach a
+# visitor is answered by asking the live address, not by reading this file.
 
 /*
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
