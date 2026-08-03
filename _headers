@@ -1,0 +1,24 @@
+# The six safety instructions this site sends to a browser.
+#
+# WHAT A SAFETY INSTRUCTION IS. When a browser asks for a page, the server can
+# send short instructions alongside it telling the browser how to behave. They
+# are called response headers. Each one below switches off a way a site can be
+# attacked. Nothing here changes how the page looks.
+#
+# WHERE THIS FILE IS READ. Every modern static host reads a file named _headers
+# at the top of the site and sends what it says: Cloudflare Pages, Netlify and
+# the rest all use this exact format. Porkbun, which serves arkhimedes.ai today,
+# does not read it, and that is proved rather than assumed by
+# scripts/ask-the-live-site-for-the-six.mjs, which fetches the real address and
+# prints what actually arrived. The two that a browser will obey when they come
+# from inside the page itself are ALSO written into index.html as meta tags, so
+# they work today. The file is here so that the day the site moves to a host
+# that reads it, all six arrive with no further work.
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; font-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()

@@ -131,6 +131,42 @@ check('logo reference resolves', () => {
   return 'ok';
 });
 
+// THE SIX SAFETY INSTRUCTIONS.
+//
+// When a browser asks for a page, the server can send short instructions
+// alongside it telling the browser how to behave. Six are standard and each
+// switches off a way a site can be attacked. Four of them only work as real
+// instructions from the server; two of them a browser will also obey when they
+// come from inside the page. The two that work from inside the page are in
+// index.html and are held here, so nobody can quietly drop them. All six are in
+// the file named _headers, which every modern static host reads, so the day the
+// site moves they all arrive with no further work.
+//
+// What actually reaches a visitor is a different question and is not answered
+// by reading our own files. That is scripts/ask-the-live-site-for-the-six.mjs,
+// which fetches the real address and prints what came back.
+check('the two safety instructions a page can carry are in the page', () => {
+  const csp = html.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i);
+  if (!csp) throw new Error('The page carries no Content-Security-Policy. That is the one that stops an injected script fetching from anywhere or sending anywhere.');
+  for (const rule of ['default-src', 'frame-ancestors', 'base-uri', 'form-action']) {
+    if (!csp[1].includes(rule)) throw new Error(`The page's Content-Security-Policy has no ${rule} rule, so that hole is open.`);
+  }
+  if (!/<meta\s+name="referrer"\s+content="strict-origin-when-cross-origin"/i.test(html)) {
+    throw new Error('The page does not limit what it tells the next site about where a visitor came from.');
+  }
+  return 'content policy and referrer';
+});
+
+check('all six safety instructions are in _headers', () => {
+  if (!existsSync('_headers')) throw new Error('_headers is missing. It is what makes all six arrive the day the site moves to a host that reads it.');
+  const text = readFileSync('_headers', 'utf8');
+  const six = ['Strict-Transport-Security', 'Content-Security-Policy', 'X-Content-Type-Options',
+    'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy'];
+  const gone = six.filter((h) => !new RegExp(`^\\s*${h}:`, 'mi').test(text));
+  if (gone.length) throw new Error(`_headers is missing ${gone.length} of the six: ${gone.join(', ')}`);
+  return 'all six';
+});
+
 console.log('');
 passed.forEach((p) => console.log(`  PASS  ${p}`));
 
